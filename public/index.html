@@ -8,6 +8,7 @@
   </head>
   <body>
     <main class="page">
+      <!-- 顶部区域负责介绍项目用途，并提供手动抓取与刷新入口。 -->
       <section class="hero">
         <p class="eyebrow">Node.js + Express</p>
         <h1>AI 新闻抓取 Demo</h1>
@@ -21,12 +22,14 @@
         <p id="status" class="status">正在读取最近一次日报...</p>
       </section>
 
+      <!-- 展示后端生成的摘要与高亮。 -->
       <section class="panel">
         <h2>本次摘要</h2>
         <p id="summary">-</p>
         <ul id="highlights" class="highlights"></ul>
       </section>
 
+      <!-- 展示完整新闻列表。 -->
       <section class="panel">
         <h2>新闻列表</h2>
         <div id="news-list" class="news-list"></div>

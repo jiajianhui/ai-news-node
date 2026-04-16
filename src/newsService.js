@@ -2,11 +2,12 @@ const fs = require("fs/promises");
 const { AI_KEYWORDS, DIGEST_FILE, NEWS_SOURCES, STORAGE_DIR } = require("./config");
 
 async function runNewsPipeline() {
+  // 整个抓取流程的入口：抓源、聚合、过滤、去重、生成摘要、落盘。
   // 并发抓取所有已配置的源；即使某个源失败，也尽量保留其他源的结果。
   const feedResults = await Promise.allSettled(
     NEWS_SOURCES.map(async (source) => {
       const xml = await fetchText(source.url);
-      const items = parseFeed(xml, source);
+      const items = parseFeed(xml);
 
       return items.map((item) => ({
         ...item,
@@ -44,6 +45,7 @@ async function readLatestDigest() {
     const content = await fs.readFile(DIGEST_FILE, "utf8");
     return JSON.parse(content);
   } catch (error) {
+    // 首次运行还没有生成文件时，返回一份空结果而不是直接报错。
     if (error.code === "ENOENT") {
       return {
         generatedAt: null,
@@ -73,18 +75,19 @@ async function fetchText(url) {
   return response.text();
 }
 
-function parseFeed(xml, source) {
+function parseFeed(xml) {
   // RSS 和 Atom 的结构不同，先判断类型再分发到对应解析函数。
   const trimmed = xml.trim();
 
   if (trimmed.includes("<feed")) {
-    return parseAtomFeed(trimmed, source);
+    return parseAtomFeed(trimmed);
   }
 
-  return parseRssFeed(trimmed, source);
+  return parseRssFeed(trimmed);
 }
 
 function parseRssFeed(xml) {
+  // 从 RSS item 节点中提取标题、链接、摘要和发布时间。
   return extractBlocks(xml, "item")
     .map((itemXml) => ({
       title: decodeXml(readTag(itemXml, "title")),
@@ -96,6 +99,7 @@ function parseRssFeed(xml) {
 }
 
 function parseAtomFeed(xml) {
+  // Atom 源的字段名和 RSS 不同，这里做一层兼容转换。
   return extractBlocks(xml, "entry")
     .map((entryXml) => ({
       title: decodeXml(readTag(entryXml, "title")),
@@ -127,6 +131,7 @@ function readTag(xml, tagName) {
 }
 
 function readAtomLink(xml) {
+  // Atom 的链接常放在 link.href 属性里，不一定是普通文本节点。
   const hrefMatch = xml.match(/<link\b[^>]*href="([^"]+)"[^>]*\/?>/i);
   if (hrefMatch) {
     return decodeXml(hrefMatch[1]);
@@ -140,6 +145,7 @@ function stripCdata(value) {
 }
 
 function decodeXml(value) {
+  // 将 XML 实体、CDATA 和简单 HTML 标签清洗成纯文本。
   return value
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
@@ -221,6 +227,7 @@ function escapeRegExp(value) {
 }
 
 function normalizeDate(value) {
+  // 统一转成 ISO 字符串，便于前后端展示和排序。
   if (!value) {
     return null;
   }

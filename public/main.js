@@ -5,6 +5,7 @@ const newsListElement = document.querySelector("#news-list");
 const runButton = document.querySelector("#run-button");
 const refreshButton = document.querySelector("#refresh-button");
 
+// 点击后主动触发一次后端抓取，再把结果渲染到页面。
 runButton.addEventListener("click", async () => {
   setStatus("正在抓取新闻，请稍等...");
   toggleButtons(true);
@@ -26,10 +27,12 @@ runButton.addEventListener("click", async () => {
   }
 });
 
+// 只读取本地最新结果，不重新抓源。
 refreshButton.addEventListener("click", async () => {
   await loadLatestDigest();
 });
 
+// 页面首次加载时，先展示最近一次生成的日报。
 loadLatestDigest();
 
 async function loadLatestDigest() {
@@ -56,6 +59,7 @@ async function loadLatestDigest() {
 }
 
 function renderDigest(digest) {
+  // 每次重绘前先清空旧内容，避免重复追加。
   summaryElement.textContent = digest.summary || "-";
   highlightsElement.innerHTML = "";
   newsListElement.innerHTML = "";
@@ -99,6 +103,7 @@ function toggleButtons(isLoading) {
 }
 
 function escapeHtml(value) {
+  // 页面使用 innerHTML 组装卡片，因此先做基础转义，避免注入风险。
   return String(value)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")

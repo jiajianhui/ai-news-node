@@ -20,4 +20,4 @@ Automated tests are not configured yet. When adding coverage, place tests under 
 Recent commits use short, imperative subjects such as `Align ai-news-node with current Node version`. Keep commit messages concise and task-focused. For pull requests, include a short summary, list any API or config changes, describe manual verification steps, and attach screenshots only when UI behavior in `public/` changes.
 
 ## Configuration Notes
-Use Node `22.12.0` as declared in `.nvmrc` and `package.json`. Avoid hardcoding new secrets or tokens; pass them through environment variables if the project expands to external APIs.
+Use Node `22.12.0` through `24.x` as declared in `package.json`. Avoid hardcoding new secrets or tokens; pass them through environment variables if the project expands to external APIs.
