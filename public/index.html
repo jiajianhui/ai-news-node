@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 新闻抓取 Demo</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <p class="eyebrow">Node.js + Express</p>
+        <h1>AI 新闻抓取 Demo</h1>
+        <p class="intro">
+          这个页面对应你文档里的第一版流程：抓 RSS、按关键词筛选、生成一份简日报。
+        </p>
+        <div class="actions">
+          <button id="run-button" type="button">立即抓取</button>
+          <button id="refresh-button" class="ghost" type="button">刷新结果</button>
+        </div>
+        <p id="status" class="status">正在读取最近一次日报...</p>
+      </section>
+
+      <section class="panel">
+        <h2>本次摘要</h2>
+        <p id="summary">-</p>
+        <ul id="highlights" class="highlights"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>新闻列表</h2>
+        <div id="news-list" class="news-list"></div>
+      </section>
+    </main>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
