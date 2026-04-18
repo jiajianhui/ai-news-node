@@ -10,8 +10,8 @@ const { AI_KEYWORDS, DIGEST_FILE, NEWS_SOURCES, STORAGE_DIR } = require("./confi
 async function runNewsPipeline() {
   const feedResults = await Promise.allSettled(
     // 1. 遍历所有新闻源并发执行抓取任务。
-    // map(...) 会返回一个新数组；...item 表示把原字段展开后再补 source。
-    // Promise.allSettled 会保留每个源的成功/失败结果，不会因为一个源报错就整体中断。
+    //    map(...) 会返回一个新数组；...item 表示把原字段展开后再补 source。
+    //    Promise.allSettled() 会保留每个源的成功/失败结果，不会因为一个源报错就整体中断。
     NEWS_SOURCES.map(async (source) => {
       // 2. fetchText：请求当前源的 RSS / Atom XML 原文。
       const xml = await fetchText(source.url);
@@ -31,8 +31,8 @@ async function runNewsPipeline() {
   const errors = [];
 
   // 5. 汇总并发抓取结果：成功的新闻合并到 allItems，失败信息记到 errors。
-  // Promise.allSettled() 的每一项只会有两种状态：
-  // fulfilled 表示成功，结果在 result.value；rejected 表示失败，错误在 result.reason。
+  //    Promise.allSettled() 的每一项只会有两种状态。
+  //    fulfilled 表示成功，结果在 result.value；rejected 表示失败，错误在 result.reason。
   for (const result of feedResults) {
     if (result.status === "fulfilled") {
       allItems.push(...result.value);
